@@ -1,6 +1,18 @@
 module Bumper
   class Version
 
+    class << self
+      def from_constants(v)
+        new(
+          (v::MAJOR if v.const_defined?(:MAJOR)),
+          (v::MINOR if v.const_defined?(:MINOR)),
+          (v::PATCH if v.const_defined?(:PATCH)),
+          (v::PRE if v.const_defined?(:PRE)),
+          (v::BUILD if v.const_defined?(:BUILD))
+        )
+      end
+    end
+
     attr_reader :major, :minor, :patch, :pre, :build
 
     def initialize(major=0, minor=0, patch=0, pre=nil, build=nil)
@@ -9,6 +21,14 @@ module Bumper
       @patch = patch
       @pre = String pre
       @build = String build
+    end
+
+    def ==(other)
+      major == other.major &&
+        minor == other.minor &&
+        patch == other.patch &&
+        pre == other.pre &&
+        build == other.build
     end
 
     def to_s

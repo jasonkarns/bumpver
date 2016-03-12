@@ -52,5 +52,15 @@ module Bumper
       Then { version.next_patch.to_s == "1.2.4" }
     end
 
+    describe "::from_constants" do
+      module Foo
+        MAJOR=4
+        MINOR=5
+        PATCH=6
+      end
+
+      Given(:version) { described_class.from_constants Foo }
+      Then { version.to_s == "4.5.6" }
+    end
   end
 end
