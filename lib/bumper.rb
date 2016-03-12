@@ -1,4 +1,4 @@
-require "Bumper/version"
+require "bumper/version"
 
 module Bumper
   # Your code goes here...
