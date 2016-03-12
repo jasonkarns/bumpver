@@ -3,7 +3,7 @@ module Bumper
 
     attr_reader :major, :minor, :patch, :pre, :build
 
-    def initialize(major, minor, patch, pre=nil, build=nil)
+    def initialize(major=0, minor=0, patch=0, pre=nil, build=nil)
       @major = major
       @minor = minor
       @patch = patch
