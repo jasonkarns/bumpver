@@ -15,7 +15,7 @@ module Bumper
 
     def bumped(version)
       @file.read.
-        sub(/(VERSION\s*=")[\w.+\-]+(.*)/) { [$1, version.to_s, $2].join }
+        sub(/(VERSION\s*=\s*["'])[\w.+\-]+(.*)/) { [$1, version.to_s, $2].join }
     end
   end
 end

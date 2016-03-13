@@ -24,5 +24,16 @@ module Bumper
       Then { file_contents == 'VERSION="4.5.6"' }
     end
 
+    context "with spaces" do
+      Given(:contents) { 'VERSION =   "1.2.3"' }
+      When { file.bump_to Version::Conversions.Version("4.5.6") }
+      Then { file_contents == 'VERSION =   "4.5.6"' }
+    end
+
+    context "with single quotes" do
+      Given(:contents) { "VERSION =   '1.2.3'" }
+      When { file.bump_to Version::Conversions.Version("4.5.6") }
+      Then { file_contents == "VERSION = '4.5.6'" }
+    end
   end
 end
