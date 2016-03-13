@@ -3,32 +3,25 @@ require 'bumper/utility'
 
 module Bumper
   describe Utility do
-    describe "replace" do
-      def replaced
-        described_class.replace(string, replace, value)
-      end
+    describe "#replace" do
+      include Utility
 
-      Given(:replace) { "FOO" }
-      Given(:value) { "'4.5.6'" }
+      context "string" do
+        context "without spaces" do
+          Then { replace("FOO='1.2.3'", "FOO", "'4.5.6'") == "FOO='4.5.6'" }
+        end
 
-      context "without spaces" do
-        Given(:string) { "FOO='1.2.3'" }
-        Then { replaced == "FOO='4.5.6'" }
-      end
+        context "with spaces" do
+          Then { replace("FOO =  '1.2.3'" , "FOO", "'4.5.6'") == "FOO =  '4.5.6'" }
+        end
 
-      context "with spaces" do
-        Given(:string) { "FOO =  '1.2.3'" }
-        Then { replaced == "FOO =  '4.5.6'" }
-      end
+        context "with double quotes" do
+          Then { replace('FOO = "1.2.3"' , "FOO", "'4.5.6'") == "FOO = '4.5.6'" }
+        end
 
-      context "with double quotes" do
-        Given(:string) { 'FOO = "1.2.3"' }
-        Then { replaced == "FOO = '4.5.6'" }
-      end
-
-      context "with single quotes" do
-        Given(:string) { "FOO = '1.2.3'" }
-        Then { replaced == "FOO = '4.5.6'" }
+        context "with single quotes" do
+          Then { replace("FOO = '1.2.3'" , "FOO", "'4.5.6'") == "FOO = '4.5.6'" }
+        end
       end
     end
   end
