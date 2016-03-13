@@ -1,21 +1,12 @@
-require 'pathname'
+require 'bumper/version_file'
 
 module Bumper
-  class StringVersionFile
-
-    def initialize(path)
-      @file = Pathname.new path
-    end
-
-    def bump_to(version)
-      File.write(@file, bumped(version))
-    end
+  class StringVersionFile < VersionFile
 
     private
 
     def bumped(version)
-      @file.read.
-        sub(/(VERSION\s*=\s*["'])[\w.+\-]+(.*)/) { [$1, version.to_s, $2].join }
+      replace(@file.read, 'VERSION', "'#{version}'")
     end
   end
 end
