@@ -1,6 +1,5 @@
 module Bumper
   class Version
-
     class << self
       def from_constants(v)
         new(
@@ -60,6 +59,20 @@ module Bumper
 
     def append(separator, component)
       "#{separator unless component.empty?}#{component}"
+    end
+
+    public
+
+    module Conversions
+      module_function
+
+      def Version(v)
+        if v.is_a?(Module) && v.const_defined?(:MAJOR)
+          Version.from_constants(v)
+        else
+          Version.from_string v.to_s
+        end
+      end
     end
 
   end

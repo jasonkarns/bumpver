@@ -2,6 +2,12 @@ require 'spec_helper'
 require 'bumper/version'
 
 module Bumper
+  module SomeVersion
+    MAJOR=4
+    MINOR=5
+    PATCH=6
+  end
+
   describe Version do
     Given(:version) { described_class.new major, minor, patch }
     Given(:major) { 1 }
@@ -53,13 +59,7 @@ module Bumper
     end
 
     describe "::from_constants" do
-      module Foo
-        MAJOR=4
-        MINOR=5
-        PATCH=6
-      end
-
-      Given(:version) { described_class.from_constants Foo }
+      Given(:version) { described_class.from_constants SomeVersion }
       Then { version.to_s == "4.5.6" }
     end
 
@@ -95,6 +95,21 @@ module Bumper
         Given(:string) { "42.7.5-alpha+0e65410" }
         Then { version.to_s == "42.7.5-alpha+0e65410" }
       end
+    end
+  end
+
+  describe "::Version" do
+    Given { allow(Version).to receive(:from_string) }
+    Given { allow(Version).to receive(:from_constants) }
+
+    context "with string" do
+      When { Version::Conversions.Version("1.2.3") }
+      Then { expect(Version).to have_received(:from_string).with("1.2.3") }
+    end
+
+    context "with constant" do
+      When { Version::Conversions.Version(SomeVersion) }
+      Then { expect(Version).to have_received(:from_constants).with(SomeVersion) }
     end
   end
 end
