@@ -1,7 +1,9 @@
 require 'pathname'
+require 'bumper/utility'
 
 module Bumper
   class VersionFile
+    include Utility
 
     def initialize(path)
       @file = Pathname.new path
@@ -10,12 +12,5 @@ module Bumper
     def bump_to(version)
       File.write(@file, bumped(version))
     end
-
-    private
-
-    def replace(string, constant, value)
-      string.sub(/(#{constant}\s*=\s*)["']?[\w.+\-]+["']?(.*)/) { [$1, value, $2].join }
-    end
   end
 end
-
