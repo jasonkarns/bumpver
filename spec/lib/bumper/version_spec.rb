@@ -62,5 +62,39 @@ module Bumper
       Given(:version) { described_class.from_constants Foo }
       Then { version.to_s == "4.5.6" }
     end
+
+    describe "::from_string" do
+      Given(:version) { described_class.from_string string }
+
+      context "with only major" do
+        Given(:string) { "42" }
+        Then { version.to_s == "42.0.0" }
+      end
+
+      context "with major.minor" do
+        Given(:string) { "42.7" }
+        Then { version.to_s == "42.7.0" }
+      end
+
+      context "with major.minor.patch" do
+        Given(:string) { "42.7.5" }
+        Then { version.to_s == "42.7.5" }
+      end
+
+      context "with pre-release" do
+        Given(:string) { "42.7.5-alpha" }
+        Then { version.to_s == "42.7.5-alpha" }
+      end
+
+      context "with build" do
+        Given(:string) { "42.7.5+0e65410" }
+        Then { version.to_s == "42.7.5+0e65410" }
+      end
+
+      context "with pre-release and build" do
+        Given(:string) { "42.7.5-alpha+0e65410" }
+        Then { version.to_s == "42.7.5-alpha+0e65410" }
+      end
+    end
   end
 end

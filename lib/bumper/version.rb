@@ -11,6 +11,15 @@ module Bumper
           (v::BUILD if v.const_defined?(:BUILD))
         )
       end
+
+      def from_string(v)
+        v, _, build = v.partition('+')
+        v, _, pre = v.partition('-')
+        major, _, v = v.partition('.')
+        minor, _, v = v.partition('.')
+        patch, _, v = v.partition('.')
+        new(major.to_i, minor.to_i, patch.to_i, pre, build)
+      end
     end
 
     attr_reader :major, :minor, :patch, :pre, :build
