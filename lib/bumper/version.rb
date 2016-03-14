@@ -63,6 +63,10 @@ module Bumper
       self.class.new(major, minor, patch+1)
     end
 
+    def next(level)
+      __send__ "next_#{level}"
+    end
+
     private
 
     def append(separator, component)

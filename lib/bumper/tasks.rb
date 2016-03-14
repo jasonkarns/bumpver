@@ -24,32 +24,27 @@ module Bumper
       end
 
       namespace :version do
-        desc "Bump major version to #{version.next_major}."
-        task :major => :guard_clean do
-          bump_to version.next_major
-          commit_as version.next_major
-        end
-
-        desc "Bump minor version to #{version.next_minor}."
-        task :minor => :guard_clean do
-          bump_to version.next_minor
-          commit_as version.next_minor
-        end
-
-        desc "Bump patch version to #{version.next_patch}."
-        task :patch => :guard_clean do
-          bump_to version.next_patch
-          commit_as version.next_patch
-        end
+        define_task(:major)
+        define_task(:minor)
+        define_task(:patch)
 
         task :guard_clean do
           guard_clean
         end
-
       end
     end
 
     private
+
+    def define_task(level)
+      next_version = version.next(level)
+
+      desc "Bump #{level} version to #{next_version}."
+      task level => :guard_clean do
+        bump_to next_version
+        commit_as next_version
+      end
+    end
 
     def bump_to(version)
       file.bump_to version
