@@ -84,6 +84,8 @@ module Bumper
     end
   end
 
+  private
+
   class Options
     def initialize(opts)
       @opts = opts
