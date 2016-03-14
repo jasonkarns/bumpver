@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'rake/tasklib'
 require 'bumper/version'
 require 'bumper/version_file'
@@ -5,25 +6,21 @@ require 'bumper/version_file'
 #TODO mute shell commands
 #TODO dry-run flag
 #TODO verbose flag
-#TODO default version from path or something
 
 module Bumper
   class Task < ::Rake::TaskLib
-    attr_reader :name
+    def initialize(name, options={})
+      options = Options.new(options) unless options.is_a?(Options)
 
-    def initialize(name, opts)
       @name = name
-      commit = opts.fetch(:commit, true)
-      current_version = opts.fetch(:version)
-      level = opts.fetch(:level, name)
-      path = opts.fetch(:path)
+      level = options.level || name
 
-      @file = VersionFile.new(path)
-      @next_version = Version.parse(current_version).next(level)
+      @file = VersionFile.new(options.path)
+      @next_version = Version.parse(options.current_version).next(level)
       @description = "Bump #{level} version to #@next_version."
 
       define
-      enhance_to_commit if commit
+      enhance_to_commit if options.commit?
     end
 
     private
@@ -51,11 +48,11 @@ module Bumper
   end
 
   class Tasks < ::Rake::TaskLib
-    def initialize(namespace=:version, opts)
-      @namespace = namespace
-      @commit = opts.fetch(:commit, true)
-      @current_version = opts.fetch(:version)
-      @path = opts.fetch(:path)
+    def initialize(options={})
+      @options = Options.new(options) unless options.is_a?(Options)
+
+      @namespace = @options.namespace
+      @current_version = @options.current_version
       define
     end
 
@@ -68,9 +65,9 @@ module Bumper
       end
 
       namespace @namespace do
-        Task.new :major, :path => @path, :version => @current_version, :commit => @commit
-        Task.new :minor, :path => @path, :version => @current_version, :commit => @commit
-        Task.new :patch, :path => @path, :version => @current_version, :commit => @commit
+        Task.new :major, @options
+        Task.new :minor, @options
+        Task.new :patch, @options
 
         task :guard_clean do
           guard_clean
@@ -85,6 +82,43 @@ module Bumper
     def clean?
       sh "git diff --quiet --exit-code"
     end
+  end
 
+  class Options
+    def initialize(opts)
+      @opts = opts
+    end
+
+    def commit?
+      @opts.fetch(:commit, true)
+    end
+
+    def current_version
+      @opts.fetch(:version, gem.version)
+    end
+
+    def level
+      @opts.fetch(:level, nil)
+    end
+
+    def namespace
+      @opts.fetch(:namespace, :version)
+    end
+
+    def path
+      @opts.fetch(:path, derived_path)
+    end
+
+    private
+
+    def gem
+      @gem ||= Gem::Specification.load Dir["*.gemspec"].first
+      #TODO handle where gemspec doesn't exist
+    end
+
+    def derived_path
+      "lib/#{gem.name.gsub('-', '_')}/version.rb"
+      #TODO handle error where file doesn't exist
+    end
   end
 end
