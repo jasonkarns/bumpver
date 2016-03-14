@@ -5,8 +5,8 @@ require 'bumper/version_file'
 module Bumper
   class Tasks < ::Rake::TaskLib
     class << self
-      def install(path, version)
-        new(VersionFile.new(path), Version.parse(version)).install
+      def define(path, version)
+        new(VersionFile.new(path), Version.parse(version)).define
       end
     end
 
@@ -17,7 +17,7 @@ module Bumper
       @version = version
     end
 
-    def install
+    def define
       desc "Print current gem version: #{version}."
       task :version do
         puts version
