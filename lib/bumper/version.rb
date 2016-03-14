@@ -1,6 +1,14 @@
 module Bumper
   class Version
     class << self
+      def parse(v)
+        if v.is_a?(Module) && v.const_defined?(:MAJOR)
+          from_constants(v)
+        else
+          from_string v.to_s
+        end
+      end
+
       def from_constants(v)
         new(
           (v::MAJOR if v.const_defined?(:MAJOR)),
@@ -60,20 +68,5 @@ module Bumper
     def append(separator, component)
       "#{separator unless component.empty?}#{component}"
     end
-
-    public
-
-    module Conversions
-      module_function
-
-      def Version(v)
-        if v.is_a?(Module) && v.const_defined?(:MAJOR)
-          Version.from_constants(v)
-        else
-          Version.from_string v.to_s
-        end
-      end
-    end
-
   end
 end

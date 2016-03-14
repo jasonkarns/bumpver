@@ -16,7 +16,7 @@ module Bumper
 
       context "single version string" do
         Given(:contents) { 'VERSION="1.2.3"' }
-        When { file.bump_to Version::Conversions.Version("4.5.6") }
+        When { file.bump_to Version.parse("4.5.6") }
         Then { bumped_file_contents == "VERSION='4.5.6'" }
       end
 
@@ -30,7 +30,7 @@ module Bumper
             end
           VER
 
-          When { file.bump_to Version::Conversions.Version("4.5.6") }
+          When { file.bump_to Version.parse("4.5.6") }
           Then { bumped_file_contents == <<-VER }
             module VERSION
               MAJOR=4
@@ -51,7 +51,7 @@ module Bumper
             end
           VER
 
-          When { file.bump_to Version::Conversions.Version("4.5.6") }
+          When { file.bump_to Version.parse("4.5.6") }
           Then { bumped_file_contents == <<-VER }
             module VERSION
               MAJOR=4

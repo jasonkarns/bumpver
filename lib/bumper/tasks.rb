@@ -4,11 +4,9 @@ require 'bumper/version_file'
 
 module Bumper
   class Tasks < ::Rake::TaskLib
-    extend Version::Conversions
-
     class << self
       def install(path, version)
-        new(VersionFile.new(path), Version(version)).install
+        new(VersionFile.new(path), Version.parse(version)).install
       end
     end
 

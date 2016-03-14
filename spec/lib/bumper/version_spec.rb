@@ -96,20 +96,20 @@ module Bumper
         Then { version.to_s == "42.7.5-alpha+0e65410" }
       end
     end
-  end
 
-  describe "::Version" do
-    Given { allow(Version).to receive(:from_string) }
-    Given { allow(Version).to receive(:from_constants) }
+    describe "::parse" do
+      Given { allow(Version).to receive(:from_string) }
+      Given { allow(Version).to receive(:from_constants) }
 
-    context "with string" do
-      When { Version::Conversions.Version("1.2.3") }
-      Then { expect(Version).to have_received(:from_string).with("1.2.3") }
-    end
+      context "with string" do
+        When { Version.parse("1.2.3") }
+        Then { expect(Version).to have_received(:from_string).with("1.2.3") }
+      end
 
-    context "with constant" do
-      When { Version::Conversions.Version(SomeVersion) }
-      Then { expect(Version).to have_received(:from_constants).with(SomeVersion) }
+      context "with constant" do
+        When { Version.parse(SomeVersion) }
+        Then { expect(Version).to have_received(:from_constants).with(SomeVersion) }
+      end
     end
   end
 end
