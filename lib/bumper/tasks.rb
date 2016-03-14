@@ -2,12 +2,22 @@ require 'rake/tasklib'
 require 'bumper/version'
 require 'bumper/version_file'
 
+#TODO mute shell commands
+#TODO dry-run flag
+#TODO verbose flag
+#TODO default version from path or something
+
 module Bumper
   class Task < ::Rake::TaskLib
     attr_reader :name
 
-    def initialize(name, path, current_version, level: name, commit: true)
+    def initialize(name, opts)
       @name = name
+      commit = opts.fetch(:commit, true)
+      current_version = opts.fetch(:version)
+      level = opts.fetch(:level, name)
+      path = opts.fetch(:path)
+
       @file = VersionFile.new(path)
       @next_version = Version.parse(current_version).next(level)
       @description = "Bump #{level} version to #@next_version."
@@ -41,11 +51,11 @@ module Bumper
   end
 
   class Tasks < ::Rake::TaskLib
-    def initialize(path, current_version, namespace: :version, commit: true)
-      @path = path
+    def initialize(namespace=:version, opts)
       @namespace = namespace
-      @current_version = current_version
-      @commit = commit
+      @commit = opts.fetch(:commit, true)
+      @current_version = opts.fetch(:version)
+      @path = opts.fetch(:path)
       define
     end
 
@@ -58,9 +68,9 @@ module Bumper
       end
 
       namespace @namespace do
-        Task.new :major, @path, @current_version, commit: @commit
-        Task.new :minor, @path, @current_version, commit: @commit
-        Task.new :patch, @path, @current_version, commit: @commit
+        Task.new :major, :path => @path, :version => @current_version, :commit => @commit
+        Task.new :minor, :path => @path, :version => @current_version, :commit => @commit
+        Task.new :patch, :path => @path, :version => @current_version, :commit => @commit
 
         task :guard_clean do
           guard_clean
