@@ -1,8 +1,10 @@
 require 'rake/tasklib'
+require 'bumper/version'
+require 'bumper/version_file'
 
 module Bumper
   class Tasks < ::Rake::TaskLib
-    include Conversions
+    extend Version::Conversions
 
     class << self
       def install(path, version)
