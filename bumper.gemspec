@@ -1,14 +1,13 @@
 # coding: utf-8
-require_relative 'lib/bumper/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "bumper"
-  spec.version       = Bumper::VERSION
+  spec.version       = "0.1.0"
   spec.authors       = ["Jason Karns"]
   spec.email         = ["jason@karns.name"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
+  spec.summary       = %q{Write a short summary, because Rubygems requires one.}
+  spec.description   = %q{Write a longer description or delete this line.}
   spec.homepage      = "TODO: Put your gem's website or public repo URL here."
   spec.license       = "MIT"
 
