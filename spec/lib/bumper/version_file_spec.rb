@@ -23,20 +23,20 @@ module Bumper
       context "separate component constants" do
         context "with only major.minor.patch" do
           Given(:contents) { <<-VER }
-          module VERSION
-            MAJOR=1
-            MINOR=2
-            PATCH=3
-          end
+            module VERSION
+              MAJOR=1
+              MINOR=2
+              PATCH=3
+            end
           VER
 
           When { file.bump_to Version::Conversions.Version("4.5.6") }
           Then { bumped_file_contents == <<-VER }
-          module VERSION
-            MAJOR=4
-            MINOR=5
-            PATCH=6
-          end
+            module VERSION
+              MAJOR=4
+              MINOR=5
+              PATCH=6
+            end
           VER
         end
 
