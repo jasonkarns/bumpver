@@ -25,20 +25,53 @@ module Bumper
 
       namespace :version do
         desc "Bump major version to #{version.next_major}."
-        task :major do
-          file.bump_to version.next_major
+        task :major => :guard_clean do
+          bump_to version.next_major
+          commit_as version.next_major
         end
 
         desc "Bump minor version to #{version.next_minor}."
-        task :minor do
-          file.bump_to version.next_minor
+        task :minor => :guard_clean do
+          bump_to version.next_minor
+          commit_as version.next_minor
         end
 
         desc "Bump patch version to #{version.next_patch}."
-        task :patch do
-          file.bump_to version.next_patch
+        task :patch => :guard_clean do
+          bump_to version.next_patch
+          commit_as version.next_patch
         end
+
+        task :guard_clean do
+          guard_clean
+        end
+
       end
+    end
+
+    private
+
+    def bump_to(version)
+      file.bump_to version
+    end
+
+    def commit_as(version)
+      sh %Q{git commit -m "Version #{version}" -- #{file}}
+    rescue => e
+      sh %Q{git checkout -- #{file}}
+      raise e
+    end
+
+    def guard_clean
+      clean? && committed? or raise("There are files that need to be committed first.")
+    end
+
+    def clean?
+      sh "git diff --exit-code"
+    end
+
+    def committed?
+      sh "git diff-index --quiet --cached HEAD"
     end
 
   end

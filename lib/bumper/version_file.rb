@@ -11,6 +11,10 @@ module Bumper
       File.write(@file, bumped.to(version))
     end
 
+    def to_s
+      @file.to_s
+    end
+
     private
 
     def bumped
