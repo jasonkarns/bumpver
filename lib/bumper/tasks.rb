@@ -24,7 +24,7 @@ module Bumper
     end
 
     def commit
-      sh %Q{git commit -m "Version #@next_version" -- #@file}
+      sh %Q{git commit --message="Version #@next_version"}
     rescue => e
       sh %Q{git checkout -- #@file}
       raise e
@@ -60,15 +60,11 @@ module Bumper
 
 
     def guard_clean
-      clean? && committed? or raise("There are files that need to be committed first.")
+      clean? or raise("There are files that need to be committed first.")
     end
 
     def clean?
-      sh "git diff --exit-code"
-    end
-
-    def committed?
-      sh "git diff-index --quiet --cached HEAD"
+      sh "git diff --quiet --exit-code"
     end
 
   end
