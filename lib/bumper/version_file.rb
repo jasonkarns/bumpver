@@ -3,34 +3,48 @@ require 'bumper/utility'
 
 module Bumper
   class VersionFile
-    include Utility
-
     def initialize(path)
       @file = Pathname.new path
     end
 
     def bump_to(version)
-      File.write(@file, bumped(version))
+      File.write(@file, bumped.to(version))
     end
-  end
 
-  class StringVersionFile < VersionFile
     private
-    def bumped(version)
-      replace(@file.read, 'VERSION', "'#{version}'")
+
+    def bumped
+      contents = @file.read
+      if contents =~ /MAJOR\s*=/
+        BumpedComponents.new(contents)
+      else
+        BumpedString.new(contents)
+      end
     end
-  end
 
-  class ConstantVersionFile < VersionFile
-    private
-    def bumped(version)
-      replace(replace(replace(replace(replace(
-        @file.read,
-        'MAJOR', version.major),
-        'MINOR', version.minor),
-        'PATCH', version.patch),
-        'PRE', 'nil'),
-        'BUILD', 'nil')
+    class Bumped
+      include Utility
+      def initialize(contents)
+        @contents = contents
+      end
+    end
+
+    class BumpedString < Bumped
+      def to(version)
+        replace(@contents, 'VERSION', "'#{version}'")
+      end
+    end
+
+    class BumpedComponents < Bumped
+      def to(version)
+        replace(replace(replace(replace(replace(
+          @contents,
+          'MAJOR', version.major),
+          'MINOR', version.minor),
+          'PATCH', version.patch),
+          'PRE', 'nil'),
+          'BUILD', 'nil')
+      end
     end
   end
 end
