@@ -4,26 +4,22 @@ require 'bumper/version_file'
 
 module Bumper
   class Tasks < ::Rake::TaskLib
-    class << self
-      def define(path, version)
-        new(VersionFile.new(path), Version.parse(version)).define
-      end
-    end
-
     attr_reader :file, :version
 
-    def initialize(file, version)
-      @file = file
-      @version = version
+    def initialize(path, version, namespace: :version)
+      @file = VersionFile.new(path)
+      @version = Version.parse(version)
+      @namespace = namespace
+      define
     end
 
     def define
       desc "Print current gem version: #{version}."
-      task :version do
+      task @namespace do
         puts version
       end
 
-      namespace :version do
+      namespace @namespace do
         define_task(:major)
         define_task(:minor)
         define_task(:patch)
