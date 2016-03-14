@@ -3,26 +3,54 @@ require 'bumper/version'
 require 'bumper/version_file'
 
 module Bumper
-  class Tasks < ::Rake::TaskLib
-    attr_reader :file, :version
-
-    def initialize(path, version, namespace: :version)
+  class Task < ::Rake::TaskLib
+    def initialize(name, path, current_version, level: name)
+      @name = name
       @file = VersionFile.new(path)
-      @version = Version.parse(version)
-      @namespace = namespace
+      @next_version = Version.parse(current_version).next(level)
+      @description = "Bump #{level} version to #@next_version."
+
       define
     end
 
+    private
+
     def define
-      desc "Print current gem version: #{version}."
+      desc @description
+      task @name do
+        @file.bump_to @next_version
+        commit
+      end
+    end
+
+    def commit
+      sh %Q{git commit -m "Version #@next_version" -- #@file}
+    rescue => e
+      sh %Q{git checkout -- #@file}
+      raise e
+    end
+  end
+
+  class Tasks < ::Rake::TaskLib
+    def initialize(path, current_version, namespace: :version)
+      @path = path
+      @namespace = namespace
+      @current_version = current_version
+      define
+    end
+
+    private
+
+    def define
+      desc "Print current gem version: #@current_version."
       task @namespace do
-        puts version
+        puts @current_version
       end
 
       namespace @namespace do
-        define_task(:major)
-        define_task(:minor)
-        define_task(:patch)
+        Task.new(:major, @path, @current_version)
+        Task.new(:minor, @path, @current_version)
+        Task.new(:patch, @path, @current_version)
 
         task :guard_clean do
           guard_clean
@@ -30,28 +58,6 @@ module Bumper
       end
     end
 
-    private
-
-    def define_task(level)
-      next_version = version.next(level)
-
-      desc "Bump #{level} version to #{next_version}."
-      task level => :guard_clean do
-        bump_to next_version
-        commit_as next_version
-      end
-    end
-
-    def bump_to(version)
-      file.bump_to version
-    end
-
-    def commit_as(version)
-      sh %Q{git commit -m "Version #{version}" -- #{file}}
-    rescue => e
-      sh %Q{git checkout -- #{file}}
-      raise e
-    end
 
     def guard_clean
       clean? && committed? or raise("There are files that need to be committed first.")
