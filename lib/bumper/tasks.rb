@@ -4,6 +4,8 @@ require 'bumper/version_file'
 
 module Bumper
   class Task < ::Rake::TaskLib
+    attr_reader :name
+
     def initialize(name, path, current_version, level: name)
       @name = name
       @file = VersionFile.new(path)
@@ -11,6 +13,15 @@ module Bumper
       @description = "Bump #{level} version to #@next_version."
 
       define
+      yield(self) if block_given?
+    end
+
+    def commit
+      sh %Q{git add -- #@file}
+      sh %Q{git commit --message="Version #@next_version"}
+    rescue => e
+      sh %Q{git checkout -- #@file}
+      raise e
     end
 
     private
@@ -19,15 +30,7 @@ module Bumper
       desc @description
       task @name do
         @file.bump_to @next_version
-        commit
       end
-    end
-
-    def commit
-      sh %Q{git commit --message="Version #@next_version"}
-    rescue => e
-      sh %Q{git checkout -- #@file}
-      raise e
     end
   end
 
@@ -48,9 +51,9 @@ module Bumper
       end
 
       namespace @namespace do
-        Task.new(:major, @path, @current_version)
-        Task.new(:minor, @path, @current_version)
-        Task.new(:patch, @path, @current_version)
+        Task.new :major, @path, @current_version, &commit
+        Task.new :minor, @path, @current_version, &commit
+        Task.new :patch, @path, @current_version, &commit
 
         task :guard_clean do
           guard_clean
@@ -58,6 +61,11 @@ module Bumper
       end
     end
 
+    def commit
+      -> (t) {
+        Rake::Task[t.name].enhance([:guard_clean]) { t.commit }
+      }
+    end
 
     def guard_clean
       clean? or raise("There are files that need to be committed first.")
