@@ -1,4 +1,4 @@
 require 'spec_helper'
 
-describe Bumper do
+describe Bumpver do
 end

@@ -1,13 +1,13 @@
 require 'rubygems'
 require 'rake/tasklib'
-require 'bumper/version'
-require 'bumper/version_file'
+require 'bumpver/version'
+require 'bumpver/version_file'
 
 #TODO mute shell commands
 #TODO dry-run flag
 #TODO verbose flag
 
-module Bumper
+module Bumpver
   class Task < ::Rake::TaskLib
     def initialize(name, options={})
       options = Options.new(options) unless options.is_a?(Options)

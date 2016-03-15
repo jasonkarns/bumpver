@@ -1,9 +1,9 @@
 require 'tempfile'
-require 'bumper/version'
+require 'bumpver/version'
 require 'spec_helper'
-require 'bumper/version_file'
+require 'bumpver/version_file'
 
-module Bumper
+module Bumpver
   describe VersionFile do
     def bumped_file_contents
       tempfile.rewind

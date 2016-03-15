@@ -1,4 +1,4 @@
-module Bumper
+module Bumpver
   module Utility
 
     module_function

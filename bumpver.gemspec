@@ -1,7 +1,7 @@
 # coding: utf-8
 
 Gem::Specification.new do |spec|
-  spec.name          = "bumper"
+  spec.name          = "bumpver"
   spec.version       = "0.1.0"
   spec.authors       = ["Jason Karns"]
   spec.email         = ["jason@karns.name"]

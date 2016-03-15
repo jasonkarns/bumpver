@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'bumper/version'
+require 'bumpver/version'
 
-module Bumper
+module Bumpver
   module SomeVersion
     MAJOR=4
     MINOR=5

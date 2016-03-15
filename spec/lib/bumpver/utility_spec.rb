@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'bumper/utility'
+require 'bumpver/utility'
 
-module Bumper
+module Bumpver
   describe Utility do
     describe "#replace" do
       include Utility

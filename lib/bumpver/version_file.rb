@@ -1,7 +1,7 @@
 require 'pathname'
-require 'bumper/utility'
+require 'bumpver/utility'
 
-module Bumper
+module Bumpver
   class VersionFile
     def initialize(path)
       @file = Pathname.new path

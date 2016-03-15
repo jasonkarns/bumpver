@@ -1,4 +1,4 @@
-module Bumper
+module Bumpver
   class Version
     class << self
       def parse(v)
