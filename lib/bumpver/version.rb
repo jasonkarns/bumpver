@@ -40,11 +40,15 @@ module Bumpver
     end
 
     def ==(other)
-      major == other.major &&
-        minor == other.minor &&
-        patch == other.patch &&
-        pre == other.pre &&
-        build == other.build
+      if other.is_a?(String)
+        self.to_s == other
+      else
+        major == other.major &&
+          minor == other.minor &&
+          patch == other.patch &&
+          pre == other.pre &&
+          build == other.build
+      end
     end
 
     def to_s
